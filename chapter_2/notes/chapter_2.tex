@@ -1,0 +1,421 @@
+\documentclass{article}
+
+% packages
+% 1. basic formatting/usage packages
+\usepackage [utf8]{inputenc}
+\usepackage {amsmath, amssymb, amsthm}
+\usepackage {color}
+\usepackage {enumerate}
+\usepackage {bm}
+\usepackage {verbatim}
+
+% 2. packages for including images
+\usepackage {graphicx}
+\graphicspath { {./img} }
+
+% 3. package for removing indents
+\usepackage [indent=0em]{parskip}
+
+% 4. package for reducing margins
+\usepackage [margin=0.75in]{geometry}
+
+% function definitions
+% 1. monospace font
+\newcommand {\code}{\texttt}
+
+\title {Chapter 2: Computer Architecture}
+\author {Frank Vojtesek}
+
+\begin {document}
+
+	\maketitle
+	
+	Modern computer archictecture is based off of the \textbf {Von Neumann Architecture},
+	which:
+	\begin {itemize}
+		\item Divides the computer up into two parts: (1) the Central Processing Unit (CPU),
+			and (2) memory
+		\item Specifies that not only computer data should live in memory, but also the
+			programs which control the computers operation 
+	\end {itemize}
+
+	\section {Structure of Computer Memory}
+	\label {sec:structure_of_memory}	
+	
+	\textbf {Computer Memory} is one or many physical chips on the computers mother board.
+	
+	Internally it is organized as a numbered sequence of fixed size containers, each
+	container contains a number.
+	\begin {itemize}
+		\item E.g., if a computer has 256 megabytes of memory, then your computer
+			contains roughly 256 million fixed size storage locations
+		\item Each storage location contains 1 byte (8 bits) of information
+		\item I.e., a positive integer whose value is between \code 0 and \code {255}
+			($ 2^8 - 1$), usually
+			represented in binary, e.g., \code {10011101}
+	\end {itemize}
+	
+	All results of any computation performed on the computer is stored in memory.
+	
+	All instructions for the CPU to follow are stored in memory also.
+	
+	The only difference between the data and the functions is the context (information)
+	that the CPU uses to understand the numbers stored in memory.
+
+	\section {The CPU}
+	\label {sec:the_cpu}	
+	
+	The CPU takes care of interpretting the data and instructions stored in memory.
+	
+	The CPU reads in instructions from memory one at a time and excutes them,
+	this is called the \textbf {fetch-execute cycle}.
+	
+	The CPU consists of the following elements:
+	\begin {itemize}
+		\item Program Counter
+		\item Instruction Decoder
+		\item Data bus
+		\item General-purpose registers
+		\item Arithemetic and logic unit
+	\end {itemize}
+	
+	The \textbf {program counter} is used to tell the computer where to fetch the next
+	instruction.
+	
+	The program counter holds the memory address of the next instruction to be executed.
+	
+	The CPU begins by looking at the program counter, and fetching whatever number is
+	stored in memory at the location specified.
+	
+	This number is then passed on to the \textbf {instruction decoder} and figures out
+	what process needs to take place, and what memory locations are going to be involved in
+	this process.
+	\begin {itemize}
+		\item These actions could include \textbf {addition}, \textbf {subtraction},
+			\textbf {multiplication}, \textbf {data movement}, etc...
+		\item Computer instructions usually consist of both the actual instruction
+			and the list of memory locations that are used to carry it out
+	\end {itemize}
+	
+	Now the computer uses the \textbf {data bus} to fetch the memory locations used
+	in the calculation
+	\begin {itemize}
+		\item The data bus is the connection between the CPU and memory
+		\item It is thye actual wire that connects them
+		\item If you look on the motherboard of a computer, the wires that
+			go in and out from the memory are the data bus
+	\end {itemize}
+	
+	In addition to the memory outside of the processsor, the processor itself has
+	some special, high-speed memory locations called registers
+	\begin {itemize}
+		\item there are two kinds of registers: (1) \textbf {general registers}, and
+			(2) \textbf {special-purpose registers}
+		\item General registers are where most of the processing happens: e.g., addition,
+			subtraction, multiplication, comparisons, etc...
+		\item Computers have very few general purpose registers, most information
+			is stored in the main memory, and brought into registers for processing, and
+			then put back into memory when the processing is complete
+		\item Special-purpose registers are registers which have very specific 
+			purposes, these will be discussed more when they come up
+	\end {itemize}
+	
+	Once the CPU has retireved all of the data it needs, it passes on the data
+	and decoded instruction to the \textbf {arithmetic and logic unit}, where the
+	instruction is actually executed.
+	
+	After the results of the computation have been calculated, the results are placed
+	on the data bus and sent to the appropriate location in memory or a register, as 
+	specified by the instruction.
+	
+	This description is simplified, and actual processors are quite a bit more complicated,
+	more information can be found in the source text.
+	
+	\section {Some Terminology}
+	\label {sec:terms}
+	
+	Computer memory is a numbered sequence of fixed-size storage locations.
+	
+	The number attached to each storage location is called it's
+	\textbf {memory address}.
+	
+	The size of a single storage location is called a \textbf {byte}.
+	
+	On \code {x86} processors, a byte is a number between \code {0} and \code {255}.
+	
+	You may be wondering how computers can display and use text, graphics, and even
+	large numbers when all they can do is store numbers betwen \code 0 and \code {255}
+	
+	The computer has specialized hardware like a graphics card with special interpretations
+	of each number
+	\begin {itemize}
+		\item When displaying to the screen, the computer uses ASCII code tables to
+			translate the numbers you are sending into letters to display on the screen
+		\item In the case of ASCII, one number translates to exactly on character (unicode
+			makes things a little bit more complicated)
+		\item For example, the capital letter \code {'A'} is represented by the number
+			\code {65} (\code {01000001}), the number character \code {'1'} is 
+			represented by the number \code {49} (\code {00110001})
+		\item In order to print out \code {"HELLO"}, you would need to give the computer
+			the sequence of numbers \code {72, 69, 76, 76, 79}
+		\item To print out the number \code {"100"}, you would need to give the computer
+			the sequence of numbners \code {49, 48, 48}
+	\end {itemize}
+	
+	In order to represent numbers larger than \code {255} we use combinations of bytes
+	\begin {itemize}
+		\item Suppose we wanted to represent the number \code {55642}, we could do this
+			using two bytes (16 bits)
+		\item The number \code {55642} is 
+			{\color {red}\code {11011001}}{\color {blue}\code{01011010}} 
+			in binary, a 16-bit
+			number
+		\item We can represent it with the two 8-bit numbers by storing the top 8-bits
+			in one memory address, and the bottom 8-bits in another
+		\item So, we would be able to represent \code {55642} with \code {217}
+			({\color {red}\code {11011001}}) and \code {90} 
+			({\color {blue}\code{01011010}})
+		\item These two bytes written next two eachother make up a single 16-bit integer
+		\item The CPU has hardware to handle the mathematics that goes into performing
+			operations on combinations of bytes
+	\end {itemize}
+	
+	We mentioned earlier that in addition to regular memory, the computer has special
+	purpose high-speed memory locations called \textbf {registers}.
+	
+	Registers keep the contents of the numbers that you are currently manipulating.
+	
+	On the computers we are using, registers are each four bytes long.
+	
+	The size of a typical register is called the computer's \textbf {word size},
+	\code {x86} processors have four-byte words.
+	
+	This means that it is most natural for computers to do computations 4 bytes at a time.
+	
+	Memory addresses are also four bytes (1 word) long, and therefore also fit into
+	a register.
+	
+	Notice that this means that we can store addresses the same way we store any other
+	number.
+	
+	In fact, the computer can't tell the difference between a value that is an address,
+	a value that is a number, a value that is an ASCII code, or a value that you have
+	decided to use for another purpose.
+	
+	A number becomes an ASCII code when you attempt to display it, and a number becomes
+	a memory address when you attempt to lookup the byte it points to.
+	\begin {itemize}
+		\item This is crucial to understanding how a computer works
+		\item The idea is based around the difference between data and information
+		\item The number itself stored in memory has no meaning without the context
+			(information, instructions) on how to process it
+		\item For example, consider the number: 
+		\begin {center}
+			\code {0100100001000101010011000100110001001111}
+		\end {center}
+		\item On it's own it is meaningless, however if I told you that this 
+			number represents a string in ASCII, and that every 
+			8 digits (8-bits) represents an ASCII code (a number between 
+			\code 0 and \code {255}), then we could parse the number as follows
+		\item First we break the number into 8 digit (bit) chunks:
+			\begin {center}
+				\code {01001000 01000101 01001100 01001100 01001111}
+			\end {center}
+		\item Then we can work out the ASCII character that corresponds to each
+			number as follows
+			\label {tab:ascii_conversion_ex}
+			\begin {center}
+				\begin {tabular}{ccc}
+					\hline
+					\textbf {Binary Number}
+						& \textbf {Decimal Number}	
+						& \textbf {ASCII Character}	
+					\\
+					\hline
+					\code {01001000}	&	\code {72}		&	\code {'H'}		\\
+					\code {01000101}	&	\code {69}		&	\code {'E'}		\\
+					\code {01001100}	&	\code {76}		&	\code {'L'}		\\
+					\code {01001100}	&	\code {76}		&	\code {'L'}		\\
+					\code {01001111}	&	\code {79}		&	\code {'O'}		\\
+					\hline
+				\end {tabular}
+			\end {center}
+		\item And we see that the number represents the word \code {"HELLO"} in 
+			ASCII that was mentioned earlier
+	\end {itemize}
+	
+	 Addresses which are stored in memory are also called \textbf {pointers}, because
+	 instead of representing a regular value, they point to a different location in 
+	 memory.
+	 
+	 As we've mentioned earlier, computer instructions are alos stored in memory.
+	 
+	 In fact, they are stored exactly the same way that other data is stored.
+	 
+	 The only way the computer knowsd that a memory location is an instruction is that a
+	 special-purpose register called the \textbf {instruction pointer} points to them
+	 at one point or another.
+	 
+	 If the instruction poihnter points to a memory word, it is loaded as an instruction.
+	 
+	 Other than that, the computer has no way of knowing the difference between programs
+	 and other types of data.
+	 \begin {itemize}
+	 	\item The source text points out here that there are some types of processers
+	 		and operating systems that mark the regions of memory that can be executed
+	 		with a special marker that indicates this.
+	 \end {itemize}
+	 
+	 \section {Interpreting Memory}
+	 \label {sec:interpreting_memory}
+	 
+	 A computer has no idea what your program is supposed to do, it will do exactly what
+	 you tell it to do.
+	 
+	 If you accidentally print out a regular number instead of the ASCII codes that make
+	 up the number's digits, the computer will try to look up what the number represents
+	 in ASCII and print that.
+	 
+	 If you tell the computer to start executing instructions at a location containing
+	 data instead of program instructions, who knows how the computer will interpret
+	 that, but it will certainly try.
+	 
+	 The computer will execute your instructions in the exact order that you specify,
+	 even if it doesn't make sense.
+	 \begin {itemize}
+	 	\item Consider the previous example with the binary number representing the
+	 		string \code {"HELLO"}
+	 	\item If I told you that you had to first invert every bit in the number,
+	 		and then every 8 digits would represent and ASCII Character
+	 	\item Then we would first invert the bits of the number, and then split the digits
+	 		into 8-bit groups:
+	 		\begin {center}
+				\code {10110111 10111010 10110011 10110011 10110000}
+			\end {center}
+		\item And decode the message as \code {"·º³³°"} which doesn't make any sense 
+	\end {itemize}
+	
+	The computer will do exactly what you tell it to, no matter how little sense it
+	makes, so you need to know exactly how to have your data in memory.
+	
+	Computers can only store numbers, so letters, pictures, music, web pages, documents,
+	and everything else are just long sequences of numbers in the computer, which
+	particular programs know how to interpret.
+	\begin  {itemize}
+		\item For example, say that you wanted to store customer information in memory
+		\item One way to do so would be to set the maximum size for the customer's 
+			name and address to 50 ASCII characters each, which would be 
+			50 bytes for each
+		\item Supposethat  you represented the customer age and the customer id 
+			with an integer (4 bytes each).
+		\item If the pointer to the start of the record was \code {0x6dfed4} in 
+			hexadecimal, then the record could be described as follows:
+			\begin {center}
+				\label {ref:fixed_width_data}
+				\begin {tabular}{ll}
+					\hline
+					\textbf {Field Name} 	&	\textbf {Record Start Pointer}	\\
+					\hline
+					\code {customerName}		&	\code {0x6dfed4}					\\
+					\code {customerAddress}	&	\code {0x6dfed4 + 50 bytes}		\\
+					\code {customerAge}		&	\code {0x6dfed4 + 100 bytes}		\\
+					\code {customerId}		&	\code {0x6dfed4 + 104 bytes}		\\
+					\hline	
+				\end {tabular}
+			\end {center}
+		\item This will cause issues if the \code {customerAddress} for example, is
+			more than 50 characters, to illustrate this issue, let's consider a simpler
+			example
+		\item Consider a simple record of the form:
+			\begin {center}
+				\begin {tabular}{lll}
+					\hline					
+					\textbf {Field Name}	& \textbf {Data Type}	& \textbf {Length}	\\
+					\hline
+					\code {initials}		& \code {ASCII String}	& \code {2 bytes}	\\
+					\code {age}			& \code {number}			& \code {1 byte}		\\
+					\hline
+				\end {tabular}
+			\end {center}
+		\item Then, for example the record \code {\{"initials": "TB", "age": 30\}}, would
+			be stored in memory as (spaces added for clarity)
+			\begin {center}
+				\code {01010100 01000010 00011110}
+			\end {center}
+		\item Where, \code {01010100} $ \mapsto$ \code {'T'}, \code {01000010}
+			$ \mapsto$ \code {'B'}, and \code {00011110} $ \mapsto$ 
+			\code {30}
+		\item Suppose we tried to enter a middle initial, then we would expect the
+			following record:
+			\begin {center}
+				\code {\{"initials": "TVB", "age": 30\}}
+			\end {center}
+		\item However, in memory this record would be stored as:
+			\begin {center}
+				{\color {green}\code {01010100 01010110 01000010}}
+				{\color {red} \code {00011110}}
+			\end {center}
+		\item There were only supposed to be 3 bytes written into memory, but 4 bytes
+			were received
+		\item The first two bytes will be read in as the initals \code {"TV"}, and
+			the byte that was meant to represent the initial \code {'B'} will be
+			read in as the integer \code {66}
+		\item The resulting record will be \code {\{"initials": "TV", "age": 66\}},
+			and the byte {\color {red} \code {00011110}} will be written into some 
+			memory address that the program wasn't supposed to access
+		\item This could cause an error, if that memory address was being used by some
+			other program
+		\item However, if the memory address was not being used, then it is possible that
+			no error would be thrown
+		\item This could result in the error going unnoticed, and a program which
+			inputs the wrong age whenever a person enters in a middle initial
+		\item This type of error can cause issues later, and would be very difficult to
+			debug
+		\item These types of errors are exploited to create 
+			\textbf {Buffer Overflow Exploits}, where a nefarious actor uses this
+			undefined behaviour to insert nefarious code in place of some system code
+			that runs with elevated privelages
+		\item In this example, one could enter in an arbitary length string for the
+			initials field followed by some nefarious code
+		\item If the initials string is exactly the right number of bytes, then this
+			could put the byte containing the first instruction of the nefarious code
+			in the memory address where some procedure for a system call is stored
+		\item Then when the system attempts to make the function call, the nefarious code
+			is run instead with root privelages
+		\item Going back to the previous customer record example, if we want to allow
+			for variable length records, then instead of storing the records as a 
+			continuous block in memory, we should store pointers to the memory address
+			of each record
+		\item Then we could even specify the length of the field as the first byte 
+			(or bytes) of the field, which would allow us to decide the field length
+			at field creation
+		\item If we assume that the memory address of the record is \code {0x6dfed4},
+			then the record could be described as follows (recall that a pointer is
+			4 bytes long)
+			\begin {center}
+				\label {ref:pointer_data}
+				\begin {tabular}{ll}
+					\hline
+					\textbf {Field Name} 			&	\textbf {Record Start Pointer}	\\
+					\hline
+					\code {customerNamePointer}		&	\code {0x6dfed4}					\\
+					\code {customerAddressPointer}	&	\code {0x6dfed4 + 4 bytes}		\\
+					\code {customerAgePointer}		&	\code {0x6dfed4 + 8 bytes}		\\
+					\code {customerIdPointer}		&	\code {0x6dfed4 + 12 bytes}		\\
+					\hline	
+				\end {tabular}
+			\end {center}
+		\item We could also have some variable length data, and some fixed width data, in
+			that case, we would only store the variable length data as a pointer
+	\end {itemize}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+\end {document}
